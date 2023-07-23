@@ -11,17 +11,14 @@ scaler=''
 with open('./model.pkl', 'rb') as file:
     model = pickle.load(file)
 
-# with open('./label_encoder_year.pkl', 'rb') as file:
-#     label_encoder_year = pickle.load(file)
+
+# Load the LabelEncoder and StandardScaler objects used during training
 with open('./label_encoder_count.pkl', 'rb') as file:
     label_encoder_count = pickle.load(file)
 with open('./scaler.pkl', 'rb') as file:
     scaler = pickle.load(file)
 
 
-# Load the LabelEncoder and StandardScaler objects used during training
-# label_encoder = joblib.load('./label_encoder.pkl')
-# scaler = joblib.load('./scaler.pkl')
 predictions=[]
 
 @app.route('/')
@@ -49,7 +46,6 @@ def predict():
      # Preprocess the inputs
     # Label encode the country
     country_encoded = label_encoder_count.transform([country])
-    # year_encoded=label_encoder_year.transform([year])
 
     # Convert other features to float
     country_encoded=float(country_encoded)
@@ -76,7 +72,6 @@ def predict():
     'drug_use_disorders':drug_use_disorders,
     'depressive_disorders':depressive_disorders,
     'alcohol_use_disorders':alcohol_use_disorders})
-    # return jsonify({'prediction': prediction}), 200
     return render_template('result.html', prediction=prediction,predictions=predictions)
 
 if __name__ == '__main__':
