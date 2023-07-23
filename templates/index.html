@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Fitness Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <div class="container-fluid">
+        <a class="navbar-brand" href="#">Mental Fitness Tracker</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse" style="justify-content: end;">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Line charts
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item" href="" data-chart="countrywise_lineplot">Yearwise DALY of each country</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Bar charts
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item" href="#" data-chart="yearwise_barchart">Yearwise mental fitness</a></li>
+                      <li><a class="dropdown-item" href="#" data-chart="yearwise_depression_barchart">Prevalence of Depression</a></li>
+                      <li><a class="dropdown-item" href="#" data-chart="schiz-bar">Prevalence of Schizophrenia</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Pie charts
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item" href="" data-chart="yearwise_piechart">DALY for each year</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                      Heatmap
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item" href=""  data-chart="correlation_matrix">Correlation Matrix</a></li>
+                    </ul>
+                  </li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <!-- Modal -->
+    
+    <div class="container">
+        <div id="myModal" class="modal" >
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <iframe id="chartFrame" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>
+            </div>
+        </div>
+    <h1 class="mt-1">Mental Fitness Tracker</h1>
+    <form action="{{ url_for('predict') }}" method="POST" id="mentalForm" class="mt-sm-2">
+        <div class="form-group">
+        <label for="country">Country:  <input type="text" id="country" class="form-control" name="country" required></label>
+    </div>
+    <div class="form-group">
+        <label for="year">Year:<input type="text" id="year" class="form-control" name="year" required></label>
+
+    </div>
+        <div class="form-group">
+        <label for="schizophrenia">Prevalence - Schizophrenia:<input type="text" id="schizophrenia" class="form-control" name="schizophrenia" required></label>
+    
+    </div>
+        <div class="form-group">
+        <label for="bipolar">Prevalence - Bipolar disorder:<input type="text" id="bipolar" class="form-control" name="bipolar" required></label>
+        
+    </div>
+        <div class="form-group">
+        <label for="eating_disorders">Prevalence - Eating disorders:<input type="text" id="eating_disorders" class="form-control" name="eating_disorders" required></label>
+        
+    </div>
+        <div class="form-group">
+        <label for="anxiety_disorders">Prevalence - Anxiety disorders:<input type="text" id="anxiety_disorders" class="form-control" name="anxiety_disorders" required></label>
+        
+    </div>
+        <div class="form-group">
+        <label for="drug_use_disorders">Prevalence - Drug use disorders:<input type="text" id="drug_use_disorders" class="form-control" name="drug_use_disorders" required></label>
+        
+    </div>
+        <div class="form-group">
+        <label for="depressive_disorders">Prevalence - Depressive disorders:<input type="text" id="depressive_disorders" class="form-control" name="depressive_disorders" required></label>
+        
+    </div>
+        <div class="form-group">
+        <label for="alcohol_use_disorders">Prevalence - Alcohol use disorders: <input type="text" id="alcohol_use_disorders" class="form-control" name="alcohol_use_disorders" required></label>
+       
+    </div>
+        <input type="submit" value="Submit">
+    </form>
+    <!-- Display previous predictions in a table -->
+    {% if predictions %}
+    <h2 class="mt-4">Previous Predictions</h2>
+    <table class="table mt-2">
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>Year</th>
+                <th>Prevalence - Schizophrenia</th>
+                <th>Prevalence - Bipolar disorder</th>
+                <th>Prevalence - Eating disorders</th>
+                <th>Prevalence - Anxiety disorders</th>
+                <th>Prevalence - Drug use disorders</th>
+                <th>Prevalence - Depressive disorders</th>
+                <th>Prevalence - Alcohol use disorders</th>
+                <th>Predicted DALY</th>
+                <!-- Add columns for other predicted values if needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for prediction in predictions %}
+            <tr>
+                <td>{{ prediction.country }}</td>
+                <td>{{ prediction.year }}</td>
+                <td>{{ prediction.schizophrenia }}</td>
+                <td>{{ prediction.bipolar }}</td>
+                <td>{{ prediction.eating_disorders }}</td>
+                <td>{{ prediction.anxiety_disorders }}</td>
+                <td>{{ prediction.drug_use_disorders }}</td>
+                <td>{{ prediction.depressive_disorders }}</td>
+                <td>{{ prediction.alcohol_use_disorders }}</td>
+                <td>{{prediction.prediction}}</td>
+                <!-- Add cells for other predicted values if needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<script>
+    // Function to reset the form
+        function resetForm() {
+            document.getElementById('mentalForm').reset();
+        }
+
+        // Function to perform prediction and show alert
+        // document.getElementById('mentalForm').addEventListener('submit', function(event) {
+        //     const countryInput = document.getElementById('country');
+        //     const yearInput = document.getElementById('year');
+        //     const schizophrenia=document.getElementById('schizophrenia');
+        //     const bipolar=document.getElementById('bipolar');
+        //     const eating_disorders=document.getElementById('eating_disorders');
+        //     const anxiety_disorders=document.getElementById('anxiety_disorders');
+        //     const drug_use_disorders=document.getElementById('drug_use_disorders');
+        //     const depressive_disorders=document.getElementById('depressive_disorders');
+        //     const alcohol_use_disorders=document.getElementById('alcohol_use_disorders');
+
+        //     if (countryInput.value.trim() === '' || isNaN(yearInput.value) || yearInput.value < 1900 || yearInput.value > 2099) {
+        //         alert('Please enter valid values for Country and Year.');
+        //         return;
+        //     }
+
+        //     // Perform the prediction using the server
+        //     const formData = new FormData();
+        //     formData.append('country', countryInput.value.trim());
+        //     formData.append('year', yearInput.value);
+        //     formData.append('schizophrenia', schizophrenia.value);
+        //     formData.append('bipolar', bipolar.value);
+        //     formData.append('eating_disorders', eating_disorders.value);
+        //     formData.append('anxiety_disorders', anxiety_disorders.value);
+        //     formData.append('drug_use_disorders', drug_use_disorders.value);
+        //     formData.append('depressive_disorders', depressive_disorders.value);
+        //     formData.append('alcohol_use_disorders', alcohol_use_disorders.value);
+            
+        //     fetch('/predict', {
+        //         method: 'POST',
+        //         body: formData
+        //     })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response;
+        //     })
+        //     .then(data => {
+        //         // Check if the response contains an error message
+        //         if (data.error) {
+        //             alert(data.error);
+        //         } else {
+        //             // Show the predicted result in an alert
+        //             alert(`The predicted result is: ${data.prediction}`);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //     });
+        // });
+    // // Client-side form validation using JavaScript
+    document.getElementById('mentalForm').addEventListener('submit', function(event) {
+        const countryInput = document.getElementById('country');
+        const yearInput = document.getElementById('year');
+        
+        if (countryInput.value.trim() === '' || isNaN(yearInput.value) || yearInput.value < 1900 || yearInput.value > 2099) {
+            event.preventDefault();
+            alert('Please enter valid values for Country and Year.');
+        }
+        // Add other validation checks for other input fields if needed
+    });
+    
+    // Function to handle click on navbar links
+    const navbarLinks = document.querySelectorAll('.dropdown-item');
+        for (const link of navbarLinks) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const chartName = this.getAttribute('data-chart');
+                console.log(chartName);
+                const modal = document.getElementById('myModal');
+                const chartFrame = document.getElementById('chartFrame');
+                // Load the corresponding chart in the modal iframe
+                chartFrame.src = `static/graphs/${chartName}.html`;
+
+                // Show the modal
+                modal.style.display = 'block';
+            });
+        }
+
+        // Function to close the modal when the close button is clicked
+        const closeModal = document.querySelector('.close');
+        closeModal.addEventListener('click', function() {
+            const modal = document.getElementById('myModal');
+            const chartFrame = document.getElementById('chartFrame');
+            chartFrame.src = '';
+            modal.style.display = 'none';
+        });
+
+        // Function to close the modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('myModal');
+            if (event.target === modal) {
+                const chartFrame = document.getElementById('chartFrame');
+                chartFrame.src = '';
+                modal.style.display = 'none';
+            }
+        });
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

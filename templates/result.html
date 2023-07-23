@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Fitness Tracker - Result</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Mental Fitness Tracker</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#bar-chart">Bar Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#line-chart">Line Chart</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="result-container">
+            <h2>Result</h2>
+            <p>The predicted result is: {{ prediction }}</p>
+        </div>
+
+        <!-- Display previous predictions in a table -->
+        <div class="table-container">
+            {% if predictions %}
+            <h2>Previous Predictions</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Year</th>
+                        <!-- Add columns for other predicted values if needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prediction in predictions %}
+                    <tr>
+                        <td>{{ prediction.country }}</td>
+                        <td>{{ prediction.year }}</td>
+                        <!-- Add cells for other predicted values if needed -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
